@@ -1,30 +1,13 @@
 import React, { FC, useState } from 'react'
-import { Empty, Typography, Table, Tag, Space, Button, Modal, message } from 'antd'
+import { Empty, Typography, Table, Tag, Space, Button, Modal, message, Spin } from 'antd'
 import { useTitle } from 'ahooks'
 import styles from './common.module.scss'
 import ListSearch from '../../components/ListSearch'
+import useLoadQuestionListData from '../../hooks/useLoadQuestionListData'
+import ListPage from '../../components/ListPage'
 
 const { Title } = Typography
 const { confirm } = Modal
-
-const rawQuestionList = [
-  {
-    _id: 'q2',
-    title: '问卷2',
-    isPublished: true,
-    isStar: true,
-    answerCount: 5,
-    createdAt: '3月11日 12:00',
-  },
-  {
-    _id: 'q5',
-    title: '问卷5',
-    isPublished: false,
-    isStar: true,
-    answerCount: 5,
-    createdAt: '3月13日 13:00',
-  },
-]
 
 const tableColumns = [
   {
@@ -48,8 +31,10 @@ const tableColumns = [
 
 const Trash: FC = () => {
   useTitle('小木问卷-回收站')
-  const [questionList, setQuestionList] = useState(rawQuestionList)
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+  const { data = {}, loading } = useLoadQuestionListData({ isDeleted: true })
+  const { list = [], total = 0 } = data
 
   function del() {
     confirm({
@@ -76,7 +61,7 @@ const Trash: FC = () => {
         </Space>
       </div>
       <Table
-        dataSource={questionList}
+        dataSource={list}
         columns={tableColumns}
         pagination={false}
         rowKey={q => q._id}
@@ -102,8 +87,16 @@ const Trash: FC = () => {
         </div>
       </div>
       <div className={styles.content}>
-        {questionList.length === 0 && <Empty description="暂无数据" />}
-        {questionList.length > 0 && TableElem}
+        {loading && (
+          <div style={{ textAlign: 'center' }}>
+            <Spin />
+          </div>
+        )}
+        {!loading && list.length === 0 && <Empty description="暂无数据" />}
+        {!loading && list.length > 0 && TableElem}
+      </div>
+      <div className={styles.footer}>
+        <ListPage total={total} />
       </div>
     </>
   )
