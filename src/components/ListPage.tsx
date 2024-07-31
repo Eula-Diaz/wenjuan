@@ -22,9 +22,11 @@ const ListPage: FC<PropsType> = (props: PropsType) => {
   const nav = useNavigate()
   const { pathname } = useLocation()
   function handlePageChange(page: number, pageSize: number) {
+    searchParams.set(LIST_PAGE_PARAM_KEY, page.toString())
+    searchParams.set(LIST_PAGE_SIZE_PARAM_KEY, pageSize.toString())
     nav({
       pathname,
-      search: `${LIST_PAGE_PARAM_KEY}=${page}&${LIST_PAGE_SIZE_PARAM_KEY}=${pageSize}`,
+      search: searchParams.toString(), // 除了改变 page pageSize 之外，其他的 url 参数要带着
     })
   }
 
