@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
-import { Empty, Pagination, Spin, Typography } from 'antd'
+import React, { FC, useState } from 'react'
+import { Empty, Spin, Typography } from 'antd'
 import { useTitle } from 'ahooks'
 import QuestionCard from '../../components/QuestionCard'
 import styles from './common.module.scss'

@@ -1,13 +1,41 @@
 import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LOGIN_PATHNAME } from '../router'
+import { useRequest } from 'ahooks'
+import { getUserInfoService } from '../services/user'
+import { Button, message, Space } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
+import { removeToken } from '../utils/user-token'
 
 const UserInfo: FC = () => {
-  return (
-    <div>
-      <Link to={LOGIN_PATHNAME}>登录</Link>
-    </div>
+  const { data } = useRequest(getUserInfoService)
+  const { username, nickname } = data || {}
+
+  const nav = useNavigate()
+
+  function logout() {
+    removeToken()
+    nav(LOGIN_PATHNAME)
+    message.success('退出成功')
+  }
+
+  const userInfo = (
+    <>
+      <span style={{ color: '#e8e8e8' }}>
+        <Space>
+          <UserOutlined />
+          {nickname}
+        </Space>
+      </span>
+      <Button type="link" onClick={logout}>
+        退出
+      </Button>
+    </>
   )
+
+  const Login = <Link to={LOGIN_PATHNAME}>登录</Link>
+
+  return <div>{username ? userInfo : Login}</div>
 }
 
 export default UserInfo
